@@ -54,7 +54,7 @@ function removeGroup() {
     localStorage.setItem("GroupsData", JSON.stringify(Data));
 }
 
-if (document.body.getAttribute("data-template") == "member_view" && document.location.href != "https://yougame.biz/irval/") {
+if (document.body.getAttribute("data-template") == "member_view" && document.location.href.startsWith("https://yougame.biz/irval/") == false && document.location.href.startsWith("https://yougame.bz/irval/") == false) {
 	const select = document.createElement("select");
     select.style["background"] = "#151d20";
     select.style["color"] = "#fff";
@@ -69,6 +69,10 @@ if (document.body.getAttribute("data-template") == "member_view" && document.loc
 
 	option = document.createElement("option");
 	option.text = "Очистить";
+	select.add(option);
+
+	option = document.createElement("option");
+	option.text = "Собственная группа";
 	select.add(option);
 
 	option = document.createElement("option");
@@ -204,6 +208,8 @@ if (document.body.getAttribute("data-template") == "member_view" && document.loc
 		var val = $(path + " option:selected").text();
 
 		switch (val) {
+			case "Собственная группа":
+				break;
             case "Очистить":
                 removeGroup();
 				document.location.reload();
@@ -218,7 +224,7 @@ if (document.body.getAttribute("data-template") == "member_view" && document.loc
 	});
 }
 
-if (document.location.href == "https://yougame.biz/irval/" || document.location.href == "https://yougame.bz/irval/") {
+if (document.location.href.startsWith("https://yougame.biz/irval/") == true || document.location.href.startsWith("https://yougame.bz/irval/") == true) {
 	var parent = document.getElementsByClassName("p-body-sidebar is-active")[0];
 	if (parent.firstElementChild.innerText.startsWith("Статус пользователя") == false) {
 		let el = document.createElement('div');
