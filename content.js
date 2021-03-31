@@ -80,6 +80,10 @@ if (document.body.getAttribute("data-template") == "member_view" && document.loc
 	select.add(option);
 
 	option = document.createElement("option");
+	option.text = "Read Only";
+	select.add(option);
+
+	option = document.createElement("option");
 	option.text = "Новичок";
 	select.add(option);
 
@@ -206,6 +210,39 @@ if (document.body.getAttribute("data-template") == "member_view" && document.loc
 
 	$(path).change(function () {
 		var val = $(path + " option:selected").text();
+
+		var token = document.getElementsByName("_xfToken")[0].getAttribute("value");
+		var username = document.getElementsByClassName("username")[0].outerText;
+		var users = [];
+		var usernames = [];
+		var group = "Новичок";
+
+		if (localStorage.getItem("GroupsData") != null) {
+			var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+			users = from_json.users;
+			usernames = from_json.usernames;
+		}
+		var index = usernames.indexOf(username);
+		if (index >= 0) {
+			group = users[index].group;
+		}
+		alert(group + " " + val);
+		if ((group == "Read Only" && val != "Read Only") || (val == "Read Only" && group != "Read Only")) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", location.href + '/ignore/', true);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			xhr.onreadystatechange = function () {
+				if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					console.log("Request was accepted.");
+				}
+				else {
+					console.log("Request Error.");
+				}
+			}
+			xhr.send("_xfToken=" + token + "&_xfResponseType=json&_xfWithData=1");
+		}
 
 		switch (val) {
 			case "Собственная группа":
