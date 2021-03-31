@@ -18,6 +18,11 @@ function setBanner(banner, group) {
                 banner[banner.length - 1].querySelector("strong").innerHTML = "<s>Забаненный</s>"
             }
             break;
+        case "Read Only":
+            if (banner.length > 0) {
+                banner[banner.length - 1].style.background = "#a39e9e";
+            }
+            break;
         case "Новичок":
         case "Новичок+":
         case "Начинающий":
@@ -204,6 +209,9 @@ setInterval( () => {
                     _usernames[i].lastChild.style["text-decoration"] = "line-through";
                     _usernames[i].lastChild.style["font-weight"] = "inherit";
                     break;
+                case "Read Only":
+                    _usernames[i].lastChild.style.color = "#b7b1b1";
+                    break;
                 case "Новичок":
                 case "Новичок+":
                 case "Начинающий":
@@ -356,9 +364,11 @@ setInterval( () => {
                 }
                 var msg = _usernames[i].parentElement.parentElement.parentElement.parentElement.parentElement;
                 var text = msg.getElementsByClassName("message-content js-messageContent")[0];
-                var ban = text.getElementsByClassName("blockMessage blockMessage--error blockMessage--iconic");
-                if (group != "Забаненный" && ban.length > 0) {
-                    text.removeChild(ban[0]);
+                    if (text != null) {
+                    var ban = text.getElementsByClassName("blockMessage blockMessage--error blockMessage--iconic");
+                    if (group != "Забаненный" && ban.length > 0) {
+                        text.removeChild(ban[0]);
+                    }
                 }
             }
         }
