@@ -226,7 +226,7 @@ if (document.body.getAttribute("data-template") == "member_view" && document.loc
 		if (index >= 0) {
 			group = users[index].group;
 		}
-		alert(group + " " + val);
+
 		if ((group == "Read Only" && val != "Read Only") || (val == "Read Only" && group != "Read Only")) {
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", location.href + '/ignore/', true);
