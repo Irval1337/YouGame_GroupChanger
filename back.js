@@ -18,6 +18,14 @@ function setBanner(banner, group) {
                 banner[banner.length - 1].querySelector("strong").innerHTML = "<s>Забаненный</s>"
             }
             break;
+        case "Тех. Администратор":
+            if (banner.length > 0) {
+                banner[banner.length - 1].style.background = "#666363";
+                banner[banner.length - 1].style["color"] = "#b3d6e6";
+                banner[banner.length - 1].style["font-weight"] = "normal";
+                banner[banner.length - 1].querySelector("strong").innerHTML = "Тех. Администратор"
+            }
+            break;
         case "Read Only":
             if (banner.length > 0) {
                 banner[banner.length - 1].style.background = "#a39e9e";
@@ -283,6 +291,7 @@ setInterval( () => {
                     _usernames[i].lastChild.style["-webkit-background-clip"] = "text";
                     _usernames[i].lastChild.style["-webkit-text-fill-color"] = "transparent";
                     break;
+                case "Тех. Администратор":
                 case "GRADIENT GROUP (0)":
                     _usernames[i].lastChild.className = "username";
                     break;
@@ -347,6 +356,18 @@ setInterval( () => {
                     }
                     break;
 
+            }
+
+            if (_usernames[i].getElementsByTagName("i").length != 0) {
+                var elem = _usernames[i].getElementsByTagName("i")[0];
+                elem.style["color"] = "#fff";
+                elem.style["background"] = _usernames[i].lastChild.style.background != "unset" ? String(_usernames[i].lastChild.style.background).replace("90deg", "270deg").replace(" text", "") : _usernames[i].lastChild.style.color;
+                elem.style["background-size"] = "150% 150%";
+                elem.style["-webkit-background-clip"] = "text";
+                elem.style["background-clip"] = "text";
+                elem.style["-webkit-text-fill-color"] = "transparent";
+                elem.style["text-fill-color"] = "transparent";
+                elem.style["animation"] = "unset";
             }
 
             if (document.body.getAttribute("data-template") == "thread_view") {
