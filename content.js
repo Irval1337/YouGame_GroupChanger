@@ -3,6 +3,24 @@ window.onload = function() {class user {
     group = null
 }
 
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                alert(allText);
+            }
+        }
+    }
+    rawFile.send(null);
+}
+
 function setGroup(group) {
     var username = document.getElementsByClassName("username")[0].outerText;
     var users = [];
@@ -202,6 +220,10 @@ if (document.body.getAttribute("data-template") == "member_view" && document.loc
 	option = document.createElement("option");
 	option.text = "Администратор";
 	select.add(option);
+	
+	option = document.createElement("option");
+	option.text = "Тех. Администратор";
+	select.add(option);
 
 	var containers = document.getElementsByClassName("buttonGroup");
     containers[containers.length - 1].appendChild(select);
@@ -268,5 +290,21 @@ if (document.location.href.startsWith("https://yougame.biz/irval/") == true || d
 		el.innerHTML = "<div class=\"block\" data-widget-section=\"userWhoSaw\" data-widget-id=\"15\" data-widget-key=\"xc_profile_views\" data-widget-definition=\"xc_profile_views\"><div class=\"block-container\"><h3 class=\"block-minorHeader\">Статус пользователя</h3><div class=\"block-body\"><div class=\"view-count center\"><span class=\"viewCount\">Developer</span></div></div></div></div>";
 		parent.insertBefore(el, parent.firstElementChild);
 	} 
+}
+
+var username = document.getElementsByClassName("username")[0].outerText;
+var usernames = [];
+if (localStorage.getItem("GroupsData") != null) {
+    var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+	usernames = from_json.usernames;
+}
+var index = usernames.indexOf(username);
+if (document.body.getAttribute("data-template") == "member_view" && index >= 0) {
+	var parent = document.getElementsByClassName("p-body-sidebar is-active")[0];
+	if (parent.firstElementChild.innerText.startsWith("Статус пользователя") == false) {
+		let el = document.createElement('div');
+		el.innerHTML = "<div class=\"block\" data-widget-section=\"userWhoSaw\" data-widget-id=\"15\" data-widget-key=\"xc_profile_views\" data-widget-definition=\"xc_profile_views\"><div class=\"block-container\"><h3 class=\"block-minorHeader\">Статус пользователя</h3><div class=\"block-body\"><div class=\"view-count center\"><span class=\"viewCount\">Custom Group</span></div></div></div></div>";
+		parent.insertBefore(el, parent.firstElementChild);
+	}
 }
 };
