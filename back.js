@@ -1,12 +1,88 @@
 var timeout = 5;
 
-function setBanner(banner, group) {
-    if (group != "Забаненный") {
-        if (banner.length > 0 && group.indexOf("GRADIENT GROUP (") >= 0) {
-            banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Gradient Group</span></b>"
+chrome.runtime.onMessage.addListener(
+    (request, sender, sendResponse) => {
+        if (request.type == "edit") {
+            var groups = JSON.parse(localStorage.getItem("customGroups"));
+            var New = JSON.parse(request.customGroups);
+            for (let i = 0; i < groups.length; i++) {
+                if (groups[i].name != New[i].group) {
+                    var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+                    var users = from_json.users;
+                    var usernames = from_json.usernames;
+                    for (let j = 0; j < users.length; j++) {
+                        if (users[j].group == groups[i].name) {
+                            users[j].group = New[i].name;
+                        }
+                    }
+                    let Data = {
+                        users: users,
+                        usernames: usernames
+                    };
+                    localStorage.setItem("GroupsData", JSON.stringify(Data));
+                    break;
+                }
+            }
         }
-        else if (banner.length > 0) {
-            banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">" + group +"</span></b>"
+        if (request.type == "del") {
+            var groups = JSON.parse(localStorage.getItem("customGroups"));
+            var New = JSON.parse(request.customGroups);
+            for (let i = 0; i < New.length; i++) {
+                if (groups[i].name != New[i].group) {
+                    var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+                    var users = from_json.users;
+                    var usernames = from_json.usernames;
+                    for (let j = 0; j < users.length; j++) {
+                        if (users[j].group == groups[i].name) {
+                            users.splice(j, 1);
+                            usernames.splice(j, 1);
+                        }
+                    }
+                    let Data = {
+                        users: users,
+                        usernames: usernames
+                    };
+                    localStorage.setItem("GroupsData", JSON.stringify(Data));
+                    break;
+                }
+            }
+        }
+        localStorage.setItem("groupChange", request.groupChange);
+        localStorage.setItem("selfStyling", request.selfStyling);
+        localStorage.setItem("customGroups", request.customGroups);
+
+        location.reload();
+    }
+);
+
+function isGarant(title) {
+    if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
+            && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>" && 
+            title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 400 RUB<br>10% отсуммы при сделке от 400 RUB</span>") {
+                return true;
+            }
+            else {
+                return false;
+            }
+}
+
+async function setBanner(banner, group) {
+    if (group != "Забаненный") {
+        var useGroup = true;
+        var groups = JSON.parse(localStorage.getItem("customGroups"));
+        for (let i = 0; i < groups.length; i++) {
+            if (groups[i].name == group && localStorage.getItem("selfStyling") != "true") {
+                useGroup = false;
+                break;
+            }
+        }
+        if (useGroup == true) {
+            if (banner.length > 0 && group.indexOf("GRADIENT GROUP (") >= 0) {
+                banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Gradient Group</span></b>"
+            }
+            else if (banner.length > 0) {
+                banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">" + group +"</span></b>" 
+            }
         }
     }
     switch (group) {
@@ -158,7 +234,29 @@ function setBanner(banner, group) {
                 banner[banner.length - 1].style.background = "#7d2226";
             }
             break;
+        default:
+            if (banner.length > 0) {
+                if (localStorage.getItem("selfStyling") == "true") {
+                    var groups = JSON.parse(localStorage.getItem("customGroups"));
+                    for (let i = 0; i < groups.length; i++) {
+                        if (groups[i].name == group) {
+                            var styles = groups[i].banner.split(";");
+                            for (let j = 0; j < styles.length; j++) {
+                                banner[banner.length - 1].style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            break;
     }
+}
+
+if (localStorage.getItem("groupChange") == null) {
+	localStorage.setItem("groupChange", "true");
+	localStorage.setItem("selfStyling", "false");
+	localStorage.setItem("customGroups", "[]");
 }
 
 if (localStorage.getItem("GroupsData") == null) {
@@ -169,6 +267,7 @@ var users = from_json.users;
 var usernames = from_json.usernames;
 
 setInterval( () => {
+    if (localStorage.getItem("groupChange") == "true") {
     var _usernames = document.getElementsByClassName("username");
     for (let i = 0; i < _usernames.length; i++) {
         var index = usernames.indexOf(_usernames[i].outerText);
@@ -197,8 +296,7 @@ setInterval( () => {
 
             var groups = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор"];
             var title = _usernames[i].parentElement.parentElement.getElementsByClassName("userTitle");
-            if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
-            && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>") {
+            if (isGarant(title)) {
                 var _title = title[0].outerText;
                 if (_title.startsWith("Куратор раздел") == true) {
                     _title = "Куратор";
@@ -292,6 +390,8 @@ setInterval( () => {
                     _usernames[i].lastChild.style["-webkit-text-fill-color"] = "transparent";
                     break;
                 case "Тех. Администратор":
+                    _usernames[i].lastChild.style.color = "#ffffff";
+                    break;
                 case "GRADIENT GROUP (0)":
                     _usernames[i].lastChild.className = "username";
                     break;
@@ -304,8 +404,7 @@ setInterval( () => {
                 case "Куратор":
                     _usernames[i].lastChild.style.color = "#4c8ccc";
                     var title = _usernames[i].parentElement.parentElement.getElementsByClassName("userTitle");
-                    if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
-                    && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>") {
+                    if (isGarant(title)) {
                         title[0].innerHTML = "Куратор раздела «uGame Secret Section»";
                         title[0].style["color"] = "#bbd6e6";
                     }
@@ -313,8 +412,7 @@ setInterval( () => {
                 case "Модератор":
                     _usernames[i].lastChild.style.color = "#1d6dbd";
                     var title = _usernames[i].parentElement.parentElement.getElementsByClassName("userTitle");
-                    if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
-                    && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>") {
+                    if (isGarant(title)) {
                         title[0].innerHTML = "Модератор форума";
                         title[0].style["color"] = "#bbd6e6";
                     }
@@ -322,8 +420,7 @@ setInterval( () => {
                 case "Арбитр":
                     _usernames[i].lastChild.style.color = "#17a79e";
                     var title = _usernames[i].parentElement.parentElement.getElementsByClassName("userTitle");
-                    if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
-                    && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>") {
+                    if (isGarant(title)) {
                         title[0].innerHTML = "Арбитр";
                         title[0].style["color"] = "#bbd6e6";
                     }
@@ -331,8 +428,7 @@ setInterval( () => {
                 case "Старший Модератор":
                     _usernames[i].lastChild.style.color = "#428db9";
                     var title = _usernames[i].parentElement.parentElement.getElementsByClassName("userTitle");
-                    if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
-                    && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>") {
+                    if (isGarant(title)) {
                         title[0].innerHTML = "Старший Модератор";
                         title[0].style["color"] = "#bbd6e6";
                     }
@@ -340,8 +436,7 @@ setInterval( () => {
                 case "Главный Модератор":
                     _usernames[i].lastChild.style.color = "#2DAF4A";
                     var title = _usernames[i].parentElement.parentElement.getElementsByClassName("userTitle");
-                    if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
-                    && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>") {
+                    if (isGarant(title)) {
                         title[0].innerHTML = "Главный Модератор";
                         title[0].style["color"] = "#bbd6e6";
                     }
@@ -349,13 +444,25 @@ setInterval( () => {
                 case "Администратор":
                     _usernames[i].lastChild.style.color = "#ec2d35";
                     var title = _usernames[i].parentElement.parentElement.getElementsByClassName("userTitle");
-                    if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
-                    && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>") {
+                    if (isGarant(title)) {
                         title[0].innerHTML = "Администратор";
                         title[0].style["color"] = "#bbd6e6";
                     }
                     break;
-
+                default:
+                    if (localStorage.getItem("selfStyling") == "true") {
+                        var groups = JSON.parse(localStorage.getItem("customGroups"));
+                        for (let i1 = 0; i1 < groups.length; i1++) {
+                            if (groups[i1].name == group) {
+                                var styles = groups[i1].username.split(";").filter(element => element != "");
+                                for (let j = 0; j < styles.length; j++) {
+                                    _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    break;
             }
 
             if (_usernames[i].getElementsByTagName("i").length != 0) {
@@ -423,4 +530,5 @@ setInterval( () => {
             break;
         }
     }
+}
 }, timeout)
