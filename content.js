@@ -3,24 +3,6 @@ window.onload = function() {class user {
     group = null
 }
 
-function readTextFile(file)
-{
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, false);
-    rawFile.onreadystatechange = function ()
-    {
-        if(rawFile.readyState === 4)
-        {
-            if(rawFile.status === 200 || rawFile.status == 0)
-            {
-                var allText = rawFile.responseText;
-                alert(allText);
-            }
-        }
-    }
-    rawFile.send(null);
-}
-
 function setGroup(group) {
     var username = document.getElementsByClassName("username")[0].outerText;
     var users = [];
@@ -72,7 +54,13 @@ function removeGroup() {
     localStorage.setItem("GroupsData", JSON.stringify(Data));
 }
 
-if (document.body.getAttribute("data-template") == "member_view" && document.location.href.startsWith("https://yougame.biz/irval/") == false && document.location.href.startsWith("https://yougame.bz/irval/") == false) {
+if (localStorage.getItem("groupChange") == null) {
+	localStorage.setItem("groupChange", "true");
+	localStorage.setItem("selfStyling", "false");
+	localStorage.setItem("customGroups", "[]");
+}
+
+if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute("data-template") == "member_view" && document.location.href.startsWith("https://yougame.biz/irval/") == false && document.location.href.startsWith("https://yougame.bz/irval/") == false) {
 	const select = document.createElement("select");
     select.style["background"] = "#151d20";
     select.style["color"] = "#fff";
@@ -87,10 +75,6 @@ if (document.body.getAttribute("data-template") == "member_view" && document.loc
 
 	option = document.createElement("option");
 	option.text = "Очистить";
-	select.add(option);
-
-	option = document.createElement("option");
-	option.text = "Собственная группа";
 	select.add(option);
 
 	option = document.createElement("option");
@@ -224,6 +208,15 @@ if (document.body.getAttribute("data-template") == "member_view" && document.loc
 	option = document.createElement("option");
 	option.text = "Тех. Администратор";
 	select.add(option);
+
+	if (localStorage.getItem("selfStyling") == "true") {
+		var groups = JSON.parse(localStorage.getItem("customGroups"));
+		for (let i = 0; i < groups.length; i++) {
+			option = document.createElement("option");
+			option.text = groups[i].name;
+			select.add(option);
+		}
+	}
 
 	var containers = document.getElementsByClassName("buttonGroup");
     containers[containers.length - 1].appendChild(select);
