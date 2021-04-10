@@ -23,5 +23,8 @@
   ],
   "permissions": [
     "activeTab", "storage"
-  ]
+  ],
+  "browser_action": {
+    "default_popup": "ui/index.html"
+  }
 }

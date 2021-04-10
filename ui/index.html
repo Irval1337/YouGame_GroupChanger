@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+	<script src="jq.js"></script>
+</head>
+<body>
+    <div class="popup">
+        <div class="popup-child popup-block popup-main">
+            <form action="">
+                <div class="item">
+                    <input type="checkbox" name="" id="groupChange" class="chb">
+                    <label>Включить замену групп</label>
+                </div>
+                <div class="item">
+                    <input type="checkbox" name="" id="selfStyling" class="chb">
+                    <label>Использовать собственные стили</label>
+
+                </div>
+            </form>
+        </div>
+        <div class="popup-child popup-block hidden group-block" id="groupChangeBlock">
+            <div class="group-list">
+                <select name="" id="select">
+                </select>
+            </div>
+            <div class="buttons-block">
+                <a href="#" class="button" id="addGroup">Добавить группу</a>
+                <a href="#" class="button" id="editGroup">Изменить группу</a>
+            </div>
+        </div>
+        <div class="popup-child popup-block hidden" id="styleChangeBlock">
+            <form action="" name="editGroup">
+                <div class="form-item">
+                    <label>Имя группы:</label>
+                    <input style="padding-top: 5px;" id="nameTextE" type="text" name="groupName">
+                    <label style="padding-top: 15px;">Стили баннера:</label>
+                    <input style="padding-top: 5px;" id="bannerTextE" type="text">
+					<label style="padding-top: 15px;">Стили имени пользователя:</label>
+                    <input style="padding-top: 5px;" id="userTextE" type="text">
+                </div>
+                <div class="buttons-block">
+                    <a href="#" class="button" id="changeGroup">Применить</a>
+                    <a href="#" class="button" id="deleteGroup">Удалить</a>
+                    <a href="#" class="button" id="closeObj1">Отмена</a>
+                </div>
+            </form>
+        </div>
+        <div class="popup-child popup-block group-change hidden" id="newGroup">
+            <form action="" name="addGroup">
+                <div class="form-item">
+                    <label>Имя группы:</label>
+                    <input style="padding-top: 5px;" id="nameText" type="text">
+                    <label style="padding-top: 15px;">Стили баннера:</label>
+                    <input style="padding-top: 5px;" id="bannerText" type="text">
+					<label style="padding-top: 15px;">Стили имени пользователя:</label>
+                    <input style="padding-top: 5px;" id="userText" type="text">
+                </div>
+                <div class="buttons-block">
+                    <a href="#" class="button" id="createGroup">Сохранить группу</a>
+                    <a href="#" class="button" id="closeObj2">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+	<script src="script.js"></script>
+</body>
+</html>
