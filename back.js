@@ -6,7 +6,7 @@ chrome.runtime.onMessage.addListener(
             var groups = JSON.parse(localStorage.getItem("customGroups"));
             var New = JSON.parse(request.customGroups);
             for (let i = 0; i < groups.length; i++) {
-                if (groups[i].name != New[i].group) {
+                if (groups[i].name != New[i].name) {
                     var from_json = JSON.parse(localStorage.getItem("GroupsData"));
                     var users = from_json.users;
                     var usernames = from_json.usernames;
@@ -27,25 +27,46 @@ chrome.runtime.onMessage.addListener(
         if (request.type == "del") {
             var groups = JSON.parse(localStorage.getItem("customGroups"));
             var New = JSON.parse(request.customGroups);
-            for (let i = 0; i < New.length; i++) {
-                if (groups[i].name != New[i].group) {
-                    var from_json = JSON.parse(localStorage.getItem("GroupsData"));
-                    var users = from_json.users;
-                    var usernames = from_json.usernames;
+
+            var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+            var users = from_json.users;
+            var usernames = from_json.usernames;
+
+            var i = 0;
+            for (; i < New.length; i++) {
+                if (groups[i].name != New[i].name) {
                     for (let j = 0; j < users.length; j++) {
                         if (users[j].group == groups[i].name) {
                             users.splice(j, 1);
                             usernames.splice(j, 1);
                         }
                     }
-                    let Data = {
-                        users: users,
-                        usernames: usernames
-                    };
-                    localStorage.setItem("GroupsData", JSON.stringify(Data));
                     break;
                 }
             }
+
+            if (New.length == 0) {
+                for (let j = 0; j < users.length; j++) {
+                    if (users[j].group == groups[0].name) {
+                        users.splice(j, 1);
+                        usernames.splice(j, 1);
+                    }
+                }
+            }
+            else if (i == New.length) {
+                for (let j = 0; j < users.length; j++) {
+                    if (users[j].group == groups[groups.length - 1].name) {
+                        users.splice(j, 1);
+                        usernames.splice(j, 1);
+                    }
+                }
+            }
+
+            let Data = {
+                users: users,
+                usernames: usernames
+            };
+            localStorage.setItem("GroupsData", JSON.stringify(Data));
         }
         localStorage.setItem("groupChange", request.groupChange);
         localStorage.setItem("selfStyling", request.selfStyling);
