@@ -1,6 +1,8 @@
 window.onload = function() {class user {
     username = null
     group = null
+	banReason = "Undefined"
+	banDate = "Undefined"
 }
 
 function setGroup(group) {
@@ -260,8 +262,6 @@ if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute(
 		}
 
 		switch (val) {
-			case "Собственная группа":
-				break;
             case "Очистить":
                 removeGroup();
 				document.location.reload();
