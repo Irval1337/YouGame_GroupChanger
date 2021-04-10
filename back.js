@@ -76,6 +76,51 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
+function editExit() {
+    document.getElementById("banEditing").remove();
+}
+
+function submitBan() {
+    var _usernames = document.getElementsByClassName("username");
+
+    var reason = document.getElementById("editBanReason").value;
+    var date = document.getElementById("editBanDate").value;
+
+    var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+    var users = from_json.users;
+    var usernames = from_json.usernames;
+    var i = 0;
+    for (; i < users.length; i++) {
+        if (usernames[i] == _usernames[0].outerText) {
+            break;
+        }
+    }
+
+    var user = {
+        group: users[i].group,
+        username: users[i].username,
+        banReason: reason,
+        banDate: date
+    }
+    users[i] = user;
+    var Data = {
+        users: users,
+        usernames: usernames,
+    }
+    localStorage.setItem("GroupsData", JSON.stringify(Data));
+    location.reload();
+}
+
+function changeBan() {
+    var elem = document.createElement('div');
+    elem.innerHTML = '<div class="overlay-container is-active" id="banEditing"><div class="overlay" tabindex="-1" role="dialog" aria-hidden="false"><div class="overlay-title"><a class="overlay-titleCloser js-overlayClose" role="button" tabindex="0" aria-label="Закрыть" id="editExit"></a>Редактировать блокировку</div><div class="overlay-content"><class="block" data-xf-init="ajax-submit"><div class="block-container"><div class="block-body"><dl class="formRow formRow--input"><dt> <div class="formRow-labelWrapper"><label class="formRow-label">Причина блокировки</label></div><div class="formRow-labelWrapper" style=" margin-top: 35px; "><label class="formRow-label">Дата блокировки</label></div></dt><dd><input type="text" class="input" name="reason" maxlength="100" id="editBanReason"> <input type="text" class="input" name="date" maxlength="100" id="editBanDate" style=" margin-top: 20px; "></dd></dl><input type="hidden" name="hard_delete" value="0"></div><dl class="formRow formSubmitRow formSubmitRow--sticky" data-xf-init="form-submit-row" style="height: 42px;"><dt></dt><dd><div class="formSubmitRow-main"><div class="formSubmitRow-bar"></div><div class="formSubmitRow-controls"><button type="submit" class="button--primary button button--icon button--icon--edit"><span class="button-text" id="submitBan">Изменить</span></button></div></div></dd></dl></div><input type="hidden" id="editOk"><input type="hidden"></class="block"></div></div></div>';
+    document.body.insertBefore(elem, document.body.firstChild);
+
+    document.getElementById("editExit").addEventListener("click", editExit);
+    document.getElementById("submitBan").addEventListener("click", submitBan);
+    
+}
+
 function isGarant(title) {
     if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
             && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>" && 
@@ -523,14 +568,27 @@ setInterval( () => {
 
             if (document.body.getAttribute("data-template") == "member_view") {
                 if (group == "Забаненный") {
+                    var j = 0;
+                    for (; j < users.length; j++) {
+                        if (usernames[j] == _usernames[0].outerText) {
+                            break;
+                        }
+                    }
+
                     if (i != 0) {
                         continue;
                     }
                     var content = _usernames[i].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
                     if (content.getElementsByClassName("blockMessage blockMessage--error").length == 0) {
                         let el = document.createElement('div');
-                        el.innerHTML = '<div class="blockMessage blockMessage--error"><p class="formRow-explain"><strong><i class="fa--xf far fa-user-times fa-fw" aria-hidden="true" title="Пользователь заблокирован"></i> Пользователь заблокирован</strong></p>	<p class="block-rowMessage block-rowMessage--warning block-rowMessage--iconic">Не рекомендуем проводить сделки до истечения срока блокировки пользователя. Если пользователь уже обманул вас каким-либо образом, обратитесь в наш арбитражный отдел, чтобы мы могли как можно скорее решить проблему. </p><p class="formRow-explain"><strong><i class="fa--xf far fa-user-circle fa-fw" aria-hidden="true" title="Заблокировал(а)"></i> Заблокировал(а)</strong>: <a href="/irval/" class="username " dir="auto" data-user-id="210082"><span class="username--style40 username--staff username--moderator">Irval</span></a> <br><strong><i class="fa--xf far fa-calendar fa-fw" aria-hidden="true" title="Дата блокировки"></i> Дата блокировки</strong>: 10 Апр 2021<br><strong><i class="fa--xf far fa-flag fa-fw" aria-hidden="true" title="Окончание блокировки"></i> Окончание блокировки</strong>: Никогда <br><strong><i class="fa--xf far fa-comment fa-fw" aria-hidden="true" title="Причина блокировки"></i> Причина блокировки</strong>: 3.17. Запрещено игнорирование новых тем от Irval. После их публикации настоятельно рекомендуем ознакомиться с материалом.  <br><strong><i class="fa--xf far fa-fire fa-fw" aria-hidden="true" title="Автоматически срабатывает"></i> Автоматически срабатывает:</strong> Нет</p></div>';
+                        el.innerHTML = '<div class="blockMessage blockMessage--error"><p class="formRow-explain"><strong><i class="fa--xf far fa-user-times fa-fw" aria-hidden="true" title="Пользователь заблокирован"></i> Пользователь заблокирован</strong></p>	<p class="block-rowMessage block-rowMessage--warning block-rowMessage--iconic">Не рекомендуем проводить сделки до истечения срока блокировки пользователя. Если пользователь уже обманул вас каким-либо образом, обратитесь в наш арбитражный отдел, чтобы мы могли как можно скорее решить проблему. </p><p class="formRow-explain"><strong><i class="fa--xf far fa-user-circle fa-fw" aria-hidden="true" title="Заблокировал(а)"></i> Заблокировал(а)</strong>: <a href="/irval/" class="username " dir="auto" data-user-id="210082"><span class="username--style40 username--staff username--moderator">Irval</span></a> <br><strong><i class="fa--xf far fa-calendar fa-fw" aria-hidden="true" title="Дата блокировки"></i> Дата блокировки</strong>: ' + users[j].banDate + '<br><strong><i class="fa--xf far fa-flag fa-fw" aria-hidden="true" title="Окончание блокировки"></i> Окончание блокировки</strong>: Никогда <br><strong><i class="fa--xf far fa-comment fa-fw" aria-hidden="true" title="Причина блокировки"></i> Причина блокировки</strong>: ' + users[j].banReason + '<br><strong><i class="fa--xf far fa-fire fa-fw" aria-hidden="true" title="Автоматически срабатывает"></i> Автоматически срабатывает:</strong> Нет</p></div>';
                         content.insertBefore(el, content.children[1]);
+
+                        el = document.createElement('div');
+                        el.innerHTML = '<div class="memberHeader-actionTop"><div class="buttonGroup"><a class="button--link button" id="changeBan" data-xf-click="overlay"><span class="button-text">Редактировать блокировку</span></a></div></div>';
+                        document.getElementsByClassName("memberHeader-content memberHeader-content--info")[0].insertBefore(el, document.getElementsByClassName("memberHeader-content memberHeader-content--info")[0].firstChild);
+
+                        document.getElementById("changeBan").addEventListener("click", changeBan); 
                     }
                 }
             }
