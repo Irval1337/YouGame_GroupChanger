@@ -520,6 +520,20 @@ setInterval( () => {
                     }
                 }
             }
+
+            if (document.body.getAttribute("data-template") == "member_view") {
+                if (group == "Забаненный") {
+                    if (i != 0) {
+                        continue;
+                    }
+                    var content = _usernames[i].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+                    if (content.getElementsByClassName("blockMessage blockMessage--error").length == 0) {
+                        let el = document.createElement('div');
+                        el.innerHTML = '<div class="blockMessage blockMessage--error"><p class="formRow-explain"><strong><i class="fa--xf far fa-user-times fa-fw" aria-hidden="true" title="Пользователь заблокирован"></i> Пользователь заблокирован</strong></p>	<p class="block-rowMessage block-rowMessage--warning block-rowMessage--iconic">Не рекомендуем проводить сделки до истечения срока блокировки пользователя. Если пользователь уже обманул вас каким-либо образом, обратитесь в наш арбитражный отдел, чтобы мы могли как можно скорее решить проблему. </p><p class="formRow-explain"><strong><i class="fa--xf far fa-user-circle fa-fw" aria-hidden="true" title="Заблокировал(а)"></i> Заблокировал(а)</strong>: <a href="/irval/" class="username " dir="auto" data-user-id="210082"><span class="username--style40 username--staff username--moderator">Irval</span></a> <br><strong><i class="fa--xf far fa-calendar fa-fw" aria-hidden="true" title="Дата блокировки"></i> Дата блокировки</strong>: 10 Апр 2021<br><strong><i class="fa--xf far fa-flag fa-fw" aria-hidden="true" title="Окончание блокировки"></i> Окончание блокировки</strong>: Никогда <br><strong><i class="fa--xf far fa-comment fa-fw" aria-hidden="true" title="Причина блокировки"></i> Причина блокировки</strong>: 3.17. Запрещено игнорирование новых тем от Irval. После их публикации настоятельно рекомендуем ознакомиться с материалом.  <br><strong><i class="fa--xf far fa-fire fa-fw" aria-hidden="true" title="Автоматически срабатывает"></i> Автоматически срабатывает:</strong> Нет</p></div>';
+                        content.insertBefore(el, content.children[1]);
+                    }
+                }
+            }
         }
     }
 
