@@ -19,11 +19,13 @@ var styles = `
 
  @-webkit-keyframes glowBanner {
     from {
+      background: #cac7c7;
       border-color: #fff;
       box-shadow: 0 0 3px #00fff2 , 0 0 6px #00fff2;
     }
 
     to {
+      background: #666363;
       border-color: #666363;
       box-shadow: 0 1 6px #00fff2;
     }
