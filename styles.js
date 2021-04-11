@@ -8,17 +8,27 @@ var styles = `
  @-webkit-keyframes glow {
       from {
        color: #fff;
-     text-shadow: 0 0 10px #00fff2, 0 0 20px #00fff2, 0 0 30px #00fff2, 0 0 40px #00fff2, 0 0 50px #00fff2, 0 0 60px #00fff2, 0 0 70px #00fff2, 0 0 90px #00fff2;
+     text-shadow: 0 0 3px #00fff2, 0 0 6px #00fff2;
    }
    
    to {
-      color: gray;
-     text-shadow: 0 0 20px #00fff2, 0 0 30px #00fff2, 0 0 40px #00fff2, 0 0 50px #00fff2, 0 0 60px #00fff2, 0 0 70px #00fff2, 0 0 80px #00fff2, 0 1 90px #00fff2;
+      color: #b1b0b0;
+     text-shadow: 0 1 6px #00fff2;
    }
  }
- 
-`;
 
+ @-webkit-keyframes glowBanner {
+    from {
+      border-color: #fff;
+      box-shadow: 0 0 3px #00fff2 , 0 0 6px #00fff2;
+    }
+
+    to {
+      border-color: #666363;
+      box-shadow: 0 1 6px #00fff2;
+    }
+  }
+`;
 var styleSheet = document.createElement("style");
 styleSheet.innerText = styles;
 document.head.appendChild(styleSheet);
