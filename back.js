@@ -71,6 +71,7 @@ chrome.runtime.onMessage.addListener(
         localStorage.setItem("groupChange", request.groupChange);
         localStorage.setItem("selfStyling", request.selfStyling);
         localStorage.setItem("customGroups", request.customGroups);
+        localStorage.setItem("customEmoji", request.customEmoji);
 
         location.reload();
     }
