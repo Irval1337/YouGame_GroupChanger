@@ -1,7 +1,7 @@
 function save(type){
   chrome.tabs.query({active: true, currentWindow: true},function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {groupChange: localStorage.getItem("groupChange") == "true", selfStyling: localStorage.getItem("selfStyling") == "true",
-    customGroups: localStorage.getItem("customGroups"), type:type});
+    customGroups: localStorage.getItem("customGroups"), type:type, customEmoji: localStorage.getItem("customEmoji")});
 })
 }
 
@@ -20,6 +20,13 @@ function selfStylingGroups() {
 
   localStorage.setItem("groupChange", checkBoxMain.checked);
   localStorage.setItem("selfStyling", checkBox.checked);
+
+  save("cb");
+}
+
+function customEmoji() {
+  var checkBox = document.getElementById("customEmoji");
+  localStorage.setItem("customEmoji", checkBox.checked);
 
   save("cb");
 }
@@ -137,9 +144,13 @@ if (localStorage.getItem("groupChange") == null) {
 if (localStorage.getItem("selfStyling") == null) {
   localStorage.setItem("selfStyling", false);
 }
+if (localStorage.getItem("customEmoji") == null) {
+  localStorage.setItem("customEmoji", false);
+}
 
 document.getElementById("groupChange").checked = localStorage.getItem("groupChange") == "true";
 document.getElementById("selfStyling").checked = localStorage.getItem("selfStyling") == "true";
+document.getElementById("customEmoji").checked = localStorage.getItem("customEmoji") == "true";
 
 if (localStorage.getItem("groupChange") == "true" && localStorage.getItem("selfStyling") == "true") {
   var block = document.getElementById("groupChangeBlock");
@@ -161,6 +172,7 @@ for (let i = 0; i < groups.length; i++) {
 
 document.getElementById("groupChange").addEventListener("click", selfStylingGroups); 
 document.getElementById("selfStyling").addEventListener("click", selfStylingGroups); 
+document.getElementById("customEmoji").addEventListener("click", customEmoji); 
 document.getElementById("addGroup").addEventListener("click", addStyle); 
 document.getElementById("editGroup").addEventListener("click", editStyle);
 document.getElementById("closeObj1").addEventListener("click", closeObj1);
