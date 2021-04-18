@@ -1,5 +1,39 @@
 var timeout = 5;
 
+function removeGroup(username) {
+    var xhr = new XMLHttpRequest();
+	xhr.open("POST", "https://irval.host/GroupChanger/RemoveUser.php", true);
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+	xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	xhr.onreadystatechange = function () {
+		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+			console.log("Request was accepted.");
+		}
+		else {
+			console.log("Request Error.");
+		}
+	}
+	xhr.send("Username=" + username);
+}
+
+function changeGroup(username, banner, name) {
+    var xhr = new XMLHttpRequest();
+	xhr.open("POST", "https://irval.host/GroupChanger/UpdateUser.php", true);
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+	xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	xhr.onreadystatechange = function () {
+		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+			console.log("Request was accepted.");
+		}
+		else {
+			console.log("Request Error.");
+		}
+	}
+	xhr.send("Username=" + username + "&BannerStyles=" + banner + "&NameStyles=" + name);
+}
+
 chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
         if (request.type == "edit") {
@@ -12,6 +46,7 @@ chrome.runtime.onMessage.addListener(
                     var usernames = from_json.usernames;
                     for (let j = 0; j < users.length; j++) {
                         if (users[j].group == groups[i].name) {
+                            changeGroup(users[j].username, New[i].banner, New[i].username);
                             users[j].group = New[i].name;
                         }
                     }
@@ -21,6 +56,16 @@ chrome.runtime.onMessage.addListener(
                     };
                     localStorage.setItem("GroupsData", JSON.stringify(Data));
                     break;
+                }
+                else if (groups[i].banner != New[i].banner || groups[i].username != New[i].username) {
+                    var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+                    var users = from_json.users;
+                    var usernames = from_json.usernames;
+                    for (let j = 0; j < users.length; j++) {
+                        if (users[j].group == groups[i].name) {
+                            changeGroup(users[j].username, New[i].banner, New[i].username);
+                        }
+                    }
                 }
             }
         }
@@ -37,6 +82,7 @@ chrome.runtime.onMessage.addListener(
                 if (groups[i].name != New[i].name) {
                     for (let j = 0; j < users.length; j++) {
                         if (users[j].group == groups[i].name) {
+                            removeGroup(usernames[j]);
                             users.splice(j, 1);
                             usernames.splice(j, 1);
                         }
@@ -72,6 +118,7 @@ chrome.runtime.onMessage.addListener(
         localStorage.setItem("selfStyling", request.selfStyling);
         localStorage.setItem("customGroups", request.customGroups);
         localStorage.setItem("customEmoji", request.customEmoji);
+        localStorage.setItem("syncGroups", request.syncGroups);
 
         location.reload();
     }
@@ -133,7 +180,7 @@ function isGarant(title) {
             }
 }
 
-async function setBanner(banner, group) {
+async function setBanner(banner, group, name) {
     if (group != "Забаненный") {
         var useGroup = true;
         var groups = JSON.parse(localStorage.getItem("customGroups"));
@@ -143,8 +190,11 @@ async function setBanner(banner, group) {
                 break;
             }
         }
-        if (useGroup == true) {
-            if (banner.length > 0 && group.indexOf("GRADIENT GROUP (") >= 0) {
+        if (useGroup == true && banner.length > 0) {
+            if (group.startsWith("$")) {
+                banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Synced Group</span></b>" 
+            }
+            else if (banner.length > 0 && group.indexOf("GRADIENT GROUP (") >= 0) {
                 banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Gradient Group</span></b>"
             }
             else if (banner.length > 0) {
@@ -315,6 +365,18 @@ async function setBanner(banner, group) {
                         }
                     }
                 }
+                if (localStorage.getItem("syncGroups") == "true") {
+                    var groups = JSON.parse(localStorage.getItem("SyncGroups"));
+                    for (let i1 = 0; i1 < groups.length; i1++) {
+                        if (groups[i1].Username == name.outerText) {
+                            var styles = groups[i1].BannerStyles.split(";");
+                            for (let j = 0; j < styles.length; j++) {
+                                banner[banner.length - 1].style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                            }
+                            break;
+                        }
+                    }
+                }
             }
             break;
     }
@@ -358,7 +420,7 @@ setInterval( () => {
             _usernames[i].lastChild.style["background"] = "unset";
             _usernames[i].lastChild.style["text-decoration"] = "unset";
             if (setBanner_ == true) {
-                setBanner(banner, group);
+                setBanner(banner, group, _usernames[i]);
             }
 
             var groups = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор"];
@@ -522,6 +584,18 @@ setInterval( () => {
                         for (let i1 = 0; i1 < groups.length; i1++) {
                             if (groups[i1].name == group) {
                                 var styles = groups[i1].username.split(";").filter(element => element != "");
+                                for (let j = 0; j < styles.length; j++) {
+                                    _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    if (localStorage.getItem("syncGroups") == "true") {
+                        var groups = JSON.parse(localStorage.getItem("SyncGroups"));
+                        for (let i1 = 0; i1 < groups.length; i1++) {
+                            if (groups[i1].Username == _usernames[i].outerText) {
+                                var styles = groups[i1].NameStyles.split(";").filter(element => element != "");
                                 for (let j = 0; j < styles.length; j++) {
                                     _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
                                 }
