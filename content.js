@@ -55,7 +55,6 @@ function removeGroup() {
 
     localStorage.setItem("GroupsData", JSON.stringify(Data));
 
-<<<<<<< HEAD
 	if (document.getElementsByClassName("username")[0].outerText == document.getElementsByClassName("p-navgroup-linkText")[0].outerText) {
 		var xhr = new XMLHttpRequest();
 		xhr.open("POST", "https://irval.host/GroupChanger/RemoveUser.php", true);
@@ -72,22 +71,6 @@ function removeGroup() {
 		}
 		xhr.send("Username=" + username);
 	}
-=======
-	var xhr = new XMLHttpRequest();
-	xhr.open("POST", "https://irval.host/GroupChanger/RemoveUser.php", true);
-	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-	xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
-	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-	xhr.onreadystatechange = function () {
-		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-			console.log("Request was accepted.");
-		}
-		else {
-			console.log("Request Error.");
-		}
-	}
-	xhr.send("Username=" + username);
->>>>>>> 5f1969e58caf602ff3375a1e5841783fd77697e2
 }
 
 if (localStorage.getItem("groupChange") == null) {
