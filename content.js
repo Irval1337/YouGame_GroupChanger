@@ -54,6 +54,21 @@ function removeGroup() {
     };
 
     localStorage.setItem("GroupsData", JSON.stringify(Data));
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", "https://irval.host/GroupChanger/RemoveUser.php", true);
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+	xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	xhr.onreadystatechange = function () {
+		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+			console.log("Request was accepted.");
+		}
+		else {
+			console.log("Request Error.");
+		}
+	}
+	xhr.send("Username=" + username);
 }
 
 if (localStorage.getItem("groupChange") == null) {
@@ -216,6 +231,7 @@ if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute(
 		for (let i = 0; i < groups.length; i++) {
 			option = document.createElement("option");
 			option.text = groups[i].name;
+			option.id = "customGroup";
 			select.add(option);
 		}
 	}
@@ -259,6 +275,31 @@ if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute(
 				}
 			}
 			xhr.send("_xfToken=" + token + "&_xfResponseType=json&_xfWithData=1");
+		}
+
+		if ($(path + " option:selected").attr("id") == "customGroup" && document.getElementsByClassName("username")[0].outerText == document.getElementsByClassName("p-navgroup-linkText")[0].outerText) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "https://irval.host/GroupChanger/AddUser.php", true);
+			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+			xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			xhr.onreadystatechange = function () {
+				if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+					console.log("Request was accepted.");
+				}
+				else {
+					console.log("Request Error. ");
+				}
+			}
+			var info = "";
+			var groups = JSON.parse(localStorage.getItem("customGroups"));
+			for (let i = 0; i < groups.length; i++) {
+				if (groups[i].name == val) {
+					info = "Username=" + document.getElementsByClassName("username")[0].outerText + "&BannerStyles=" + groups[i].banner + "&NameStyles=" + groups[i].username;
+					break;
+				}
+			}
+			xhr.send(info);
 		}
 
 		switch (val) {
