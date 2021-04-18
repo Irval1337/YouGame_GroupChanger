@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "YouGame GroupChanger",
-  "version": "1.12.4",
+  "version": "3.0.2",
   "description": "Расширение для визуального изменения групп пользователей",
   "icons": {
     "16": "icons/icon16.png",
@@ -12,12 +12,12 @@
   },
   "content_scripts": [
     {
-      "js": ["jq.js", "back.js"],
+      "js": ["jq.js", "back.js", "syncGroups.js"],
       "matches": ["*://*.yougame.biz/*", "*://yougame.biz/*", "*://*.yougame.bz/*", "*://yougame.bz/*"],
       "run_at":"document_start"
     },
     {
-      "js": ["content.js"],
+      "js": ["emoji.js", "styles.js", "content.js"],
       "matches": ["*://*.yougame.biz/*", "*://yougame.biz/*", "*://*.yougame.bz/*", "*://yougame.bz/*"]
     }
   ],

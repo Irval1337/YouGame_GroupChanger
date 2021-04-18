@@ -1,17 +1,52 @@
 var timeout = 5;
 
+function removeGroup(username) {
+    var xhr = new XMLHttpRequest();
+	xhr.open("POST", "https://irval.host/GroupChanger/RemoveUser.php", true);
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+	xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	xhr.onreadystatechange = function () {
+		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+			console.log("Request was accepted.");
+		}
+		else {
+			console.log("Request Error.");
+		}
+	}
+	xhr.send("Username=" + username);
+}
+
+function changeGroup(username, banner, name) {
+    var xhr = new XMLHttpRequest();
+	xhr.open("POST", "https://irval.host/GroupChanger/UpdateUser.php", true);
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+	xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	xhr.onreadystatechange = function () {
+		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+			console.log("Request was accepted.");
+		}
+		else {
+			console.log("Request Error.");
+		}
+	}
+	xhr.send("Username=" + username + "&BannerStyles=" + banner + "&NameStyles=" + name);
+}
+
 chrome.runtime.onMessage.addListener(
     (request, sender, sendResponse) => {
         if (request.type == "edit") {
             var groups = JSON.parse(localStorage.getItem("customGroups"));
             var New = JSON.parse(request.customGroups);
             for (let i = 0; i < groups.length; i++) {
-                if (groups[i].name != New[i].group) {
+                if (groups[i].name != New[i].name) {
                     var from_json = JSON.parse(localStorage.getItem("GroupsData"));
                     var users = from_json.users;
                     var usernames = from_json.usernames;
                     for (let j = 0; j < users.length; j++) {
                         if (users[j].group == groups[i].name) {
+                            changeGroup(users[j].username, New[i].banner, New[i].username);
                             users[j].group = New[i].name;
                         }
                     }
@@ -22,38 +57,117 @@ chrome.runtime.onMessage.addListener(
                     localStorage.setItem("GroupsData", JSON.stringify(Data));
                     break;
                 }
-            }
-        }
-        if (request.type == "del") {
-            var groups = JSON.parse(localStorage.getItem("customGroups"));
-            var New = JSON.parse(request.customGroups);
-            for (let i = 0; i < New.length; i++) {
-                if (groups[i].name != New[i].group) {
+                else if (groups[i].banner != New[i].banner || groups[i].username != New[i].username) {
                     var from_json = JSON.parse(localStorage.getItem("GroupsData"));
                     var users = from_json.users;
                     var usernames = from_json.usernames;
                     for (let j = 0; j < users.length; j++) {
                         if (users[j].group == groups[i].name) {
+                            changeGroup(users[j].username, New[i].banner, New[i].username);
+                        }
+                    }
+                }
+            }
+        }
+        if (request.type == "del") {
+            var groups = JSON.parse(localStorage.getItem("customGroups"));
+            var New = JSON.parse(request.customGroups);
+
+            var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+            var users = from_json.users;
+            var usernames = from_json.usernames;
+
+            var i = 0;
+            for (; i < New.length; i++) {
+                if (groups[i].name != New[i].name) {
+                    for (let j = 0; j < users.length; j++) {
+                        if (users[j].group == groups[i].name) {
+                            removeGroup(usernames[j]);
                             users.splice(j, 1);
                             usernames.splice(j, 1);
                         }
                     }
-                    let Data = {
-                        users: users,
-                        usernames: usernames
-                    };
-                    localStorage.setItem("GroupsData", JSON.stringify(Data));
                     break;
                 }
             }
+
+            if (New.length == 0) {
+                for (let j = 0; j < users.length; j++) {
+                    if (users[j].group == groups[0].name) {
+                        users.splice(j, 1);
+                        usernames.splice(j, 1);
+                    }
+                }
+            }
+            else if (i == New.length) {
+                for (let j = 0; j < users.length; j++) {
+                    if (users[j].group == groups[groups.length - 1].name) {
+                        users.splice(j, 1);
+                        usernames.splice(j, 1);
+                    }
+                }
+            }
+
+            let Data = {
+                users: users,
+                usernames: usernames
+            };
+            localStorage.setItem("GroupsData", JSON.stringify(Data));
         }
         localStorage.setItem("groupChange", request.groupChange);
         localStorage.setItem("selfStyling", request.selfStyling);
         localStorage.setItem("customGroups", request.customGroups);
+        localStorage.setItem("customEmoji", request.customEmoji);
+        localStorage.setItem("syncGroups", request.syncGroups);
 
         location.reload();
     }
 );
+
+function editExit() {
+    document.getElementById("banEditing").remove();
+}
+
+function submitBan() {
+    var _usernames = document.getElementsByClassName("username");
+
+    var reason = document.getElementById("editBanReason").value;
+    var date = document.getElementById("editBanDate").value;
+
+    var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+    var users = from_json.users;
+    var usernames = from_json.usernames;
+    var i = 0;
+    for (; i < users.length; i++) {
+        if (usernames[i] == _usernames[0].outerText) {
+            break;
+        }
+    }
+
+    var user = {
+        group: users[i].group,
+        username: users[i].username,
+        banReason: reason,
+        banDate: date
+    }
+    users[i] = user;
+    var Data = {
+        users: users,
+        usernames: usernames,
+    }
+    localStorage.setItem("GroupsData", JSON.stringify(Data));
+    location.reload();
+}
+
+function changeBan() {
+    var elem = document.createElement('div');
+    elem.innerHTML = '<div class="overlay-container is-active" id="banEditing"><div class="overlay" tabindex="-1" role="dialog" aria-hidden="false"><div class="overlay-title"><a class="overlay-titleCloser js-overlayClose" role="button" tabindex="0" aria-label="Закрыть" id="editExit"></a>Редактировать блокировку</div><div class="overlay-content"><class="block" data-xf-init="ajax-submit"><div class="block-container"><div class="block-body"><dl class="formRow formRow--input"><dt> <div class="formRow-labelWrapper"><label class="formRow-label">Причина блокировки</label></div><div class="formRow-labelWrapper" style=" margin-top: 35px; "><label class="formRow-label">Дата блокировки</label></div></dt><dd><input type="text" class="input" name="reason" maxlength="100" id="editBanReason"> <input type="text" class="input" name="date" maxlength="100" id="editBanDate" style=" margin-top: 20px; "></dd></dl><input type="hidden" name="hard_delete" value="0"></div><dl class="formRow formSubmitRow formSubmitRow--sticky" data-xf-init="form-submit-row" style="height: 42px;"><dt></dt><dd><div class="formSubmitRow-main"><div class="formSubmitRow-bar"></div><div class="formSubmitRow-controls"><button type="submit" class="button--primary button button--icon button--icon--edit"><span class="button-text" id="submitBan">Изменить</span></button></div></div></dd></dl></div><input type="hidden" id="editOk"><input type="hidden"></class="block"></div></div></div>';
+    document.body.insertBefore(elem, document.body.firstChild);
+
+    document.getElementById("editExit").addEventListener("click", editExit);
+    document.getElementById("submitBan").addEventListener("click", submitBan);
+    
+}
 
 function isGarant(title) {
     if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
@@ -66,7 +180,7 @@ function isGarant(title) {
             }
 }
 
-async function setBanner(banner, group) {
+async function setBanner(banner, group, name) {
     if (group != "Забаненный") {
         var useGroup = true;
         var groups = JSON.parse(localStorage.getItem("customGroups"));
@@ -76,8 +190,11 @@ async function setBanner(banner, group) {
                 break;
             }
         }
-        if (useGroup == true) {
-            if (banner.length > 0 && group.indexOf("GRADIENT GROUP (") >= 0) {
+        if (useGroup == true && banner.length > 0) {
+            if (group.startsWith("$")) {
+                banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Synced Group</span></b>" 
+            }
+            else if (banner.length > 0 && group.indexOf("GRADIENT GROUP (") >= 0) {
                 banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Gradient Group</span></b>"
             }
             else if (banner.length > 0) {
@@ -248,6 +365,18 @@ async function setBanner(banner, group) {
                         }
                     }
                 }
+                if (localStorage.getItem("syncGroups") == "true") {
+                    var groups = JSON.parse(localStorage.getItem("SyncGroups"));
+                    for (let i1 = 0; i1 < groups.length; i1++) {
+                        if (groups[i1].Username == name.outerText) {
+                            var styles = groups[i1].BannerStyles.split(";");
+                            for (let j = 0; j < styles.length; j++) {
+                                banner[banner.length - 1].style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                            }
+                            break;
+                        }
+                    }
+                }
             }
             break;
     }
@@ -291,7 +420,7 @@ setInterval( () => {
             _usernames[i].lastChild.style["background"] = "unset";
             _usernames[i].lastChild.style["text-decoration"] = "unset";
             if (setBanner_ == true) {
-                setBanner(banner, group);
+                setBanner(banner, group, _usernames[i]);
             }
 
             var groups = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор"];
@@ -462,6 +591,18 @@ setInterval( () => {
                             }
                         }
                     }
+                    if (localStorage.getItem("syncGroups") == "true") {
+                        var groups = JSON.parse(localStorage.getItem("SyncGroups"));
+                        for (let i1 = 0; i1 < groups.length; i1++) {
+                            if (groups[i1].Username == _usernames[i].outerText) {
+                                var styles = groups[i1].NameStyles.split(";").filter(element => element != "");
+                                for (let j = 0; j < styles.length; j++) {
+                                    _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                                }
+                                break;
+                            }
+                        }
+                    }
                     break;
             }
 
@@ -496,6 +637,33 @@ setInterval( () => {
                     var ban = text.getElementsByClassName("blockMessage blockMessage--error blockMessage--iconic");
                     if (group != "Забаненный" && ban.length > 0) {
                         text.removeChild(ban[0]);
+                    }
+                }
+            }
+
+            if (document.body.getAttribute("data-template") == "member_view") {
+                if (group == "Забаненный") {
+                    var j = 0;
+                    for (; j < users.length; j++) {
+                        if (usernames[j] == _usernames[0].outerText) {
+                            break;
+                        }
+                    }
+
+                    if (i != 0) {
+                        continue;
+                    }
+                    var content = _usernames[i].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+                    if (content.getElementsByClassName("blockMessage blockMessage--error").length == 0) {
+                        let el = document.createElement('div');
+                        el.innerHTML = '<div class="blockMessage blockMessage--error"><p class="formRow-explain"><strong><i class="fa--xf far fa-user-times fa-fw" aria-hidden="true" title="Пользователь заблокирован"></i> Пользователь заблокирован</strong></p>	<p class="block-rowMessage block-rowMessage--warning block-rowMessage--iconic">Не рекомендуем проводить сделки до истечения срока блокировки пользователя. Если пользователь уже обманул вас каким-либо образом, обратитесь в наш арбитражный отдел, чтобы мы могли как можно скорее решить проблему. </p><p class="formRow-explain"><strong><i class="fa--xf far fa-user-circle fa-fw" aria-hidden="true" title="Заблокировал(а)"></i> Заблокировал(а)</strong>: <a href="/irval/" class="username " dir="auto" data-user-id="210082"><span class="username--style40 username--staff username--moderator">Irval</span></a> <br><strong><i class="fa--xf far fa-calendar fa-fw" aria-hidden="true" title="Дата блокировки"></i> Дата блокировки</strong>: ' + users[j].banDate + '<br><strong><i class="fa--xf far fa-flag fa-fw" aria-hidden="true" title="Окончание блокировки"></i> Окончание блокировки</strong>: Никогда <br><strong><i class="fa--xf far fa-comment fa-fw" aria-hidden="true" title="Причина блокировки"></i> Причина блокировки</strong>: ' + users[j].banReason + '<br><strong><i class="fa--xf far fa-fire fa-fw" aria-hidden="true" title="Автоматически срабатывает"></i> Автоматически срабатывает:</strong> Нет</p></div>';
+                        content.insertBefore(el, content.children[1]);
+
+                        el = document.createElement('div');
+                        el.innerHTML = '<div class="memberHeader-actionTop"><div class="buttonGroup"><a class="button--link button" id="changeBan" data-xf-click="overlay"><span class="button-text">Редактировать блокировку</span></a></div></div>';
+                        document.getElementsByClassName("memberHeader-content memberHeader-content--info")[0].insertBefore(el, document.getElementsByClassName("memberHeader-content memberHeader-content--info")[0].firstChild);
+
+                        document.getElementById("changeBan").addEventListener("click", changeBan); 
                     }
                 }
             }
