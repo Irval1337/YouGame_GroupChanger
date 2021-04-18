@@ -1,7 +1,7 @@
 function save(type){
   chrome.tabs.query({active: true, currentWindow: true},function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {groupChange: localStorage.getItem("groupChange") == "true", selfStyling: localStorage.getItem("selfStyling") == "true",
-    customGroups: localStorage.getItem("customGroups"), type:type, customEmoji: localStorage.getItem("customEmoji")});
+    customGroups: localStorage.getItem("customGroups"), type:type, customEmoji: localStorage.getItem("customEmoji"), syncGroups: localStorage.getItem("syncGroups")});
 })
 }
 
@@ -27,6 +27,13 @@ function selfStylingGroups() {
 function customEmoji() {
   var checkBox = document.getElementById("customEmoji");
   localStorage.setItem("customEmoji", checkBox.checked);
+
+  save("cb");
+}
+
+function syncGroups() {
+  var checkBox = document.getElementById("syncGroups");
+  localStorage.setItem("syncGroups", checkBox.checked);
 
   save("cb");
 }
@@ -76,28 +83,30 @@ function closeObj2(){
 }
 
 function createGroup(){
-  var name = document.getElementById("nameText").value;
-  var banner = document.getElementById("bannerText").value;
-  var username = document.getElementById("userText").value;
+  if (String(document.getElementById("nameText").value).startsWith("$") != true) {
+    var name = document.getElementById("nameText").value;
+    var banner = document.getElementById("bannerText").value;
+    var username = document.getElementById("userText").value;
 
-  var groups = JSON.parse(localStorage.getItem("customGroups"));
-  var group = {
-    name: name,
-    banner: banner,
-    username: username
-  };
-  groups.push(group);
-  localStorage.setItem("customGroups", JSON.stringify(groups));
+    var groups = JSON.parse(localStorage.getItem("customGroups"));
+    var group = {
+      name: name,
+      banner: banner,
+      username: username
+    };
+    groups.push(group);
+    localStorage.setItem("customGroups", JSON.stringify(groups));
 
-  newGroup = new Option(name, name);
-  document.getElementById("select").appendChild(newGroup);
+    newGroup = new Option(name, name);
+    document.getElementById("select").appendChild(newGroup);
 
-  document.getElementById("nameText").value = "";
-  document.getElementById("bannerText").value = "";
-  document.getElementById("userText").value = "";
-  closeObj2();
+    document.getElementById("nameText").value = "";
+    document.getElementById("bannerText").value = "";
+    document.getElementById("userText").value = "";
+    closeObj2();
 
-  save("new");
+    save("new");
+  }
 }
 
 function changeGroup(){
@@ -105,7 +114,7 @@ function changeGroup(){
   if (groupName != "") {
     var groups = JSON.parse(localStorage.getItem("customGroups"));
     for (let i = 0; i < groups.length; i++) {
-      if (groups[i].name == groupName) {
+      if (groups[i].name == groupName && String(document.getElementById("nameTextE").value).startsWith("$") != true) {
         groups[i].name = document.getElementById("nameTextE").value;
         groups[i].banner = document.getElementById("bannerTextE").value;
         groups[i].username = document.getElementById("userTextE").value;
@@ -147,10 +156,14 @@ if (localStorage.getItem("selfStyling") == null) {
 if (localStorage.getItem("customEmoji") == null) {
   localStorage.setItem("customEmoji", false);
 }
+if (localStorage.getItem("syncGroups") == null) {
+  localStorage.setItem("syncGroups", false);
+}
 
 document.getElementById("groupChange").checked = localStorage.getItem("groupChange") == "true";
 document.getElementById("selfStyling").checked = localStorage.getItem("selfStyling") == "true";
 document.getElementById("customEmoji").checked = localStorage.getItem("customEmoji") == "true";
+document.getElementById("syncGroups").checked = localStorage.getItem("syncGroups") == "true";
 
 if (localStorage.getItem("groupChange") == "true" && localStorage.getItem("selfStyling") == "true") {
   var block = document.getElementById("groupChangeBlock");
@@ -173,6 +186,7 @@ for (let i = 0; i < groups.length; i++) {
 document.getElementById("groupChange").addEventListener("click", selfStylingGroups); 
 document.getElementById("selfStyling").addEventListener("click", selfStylingGroups); 
 document.getElementById("customEmoji").addEventListener("click", customEmoji); 
+document.getElementById("syncGroups").addEventListener("click", syncGroups); 
 document.getElementById("addGroup").addEventListener("click", addStyle); 
 document.getElementById("editGroup").addEventListener("click", editStyle);
 document.getElementById("closeObj1").addEventListener("click", closeObj1);
