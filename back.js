@@ -172,7 +172,8 @@ function changeBan() {
 function isGarant(title) {
     if (title.length > 0 && title[0].style != null && title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 500 RUB<br>10% отсуммы при сделке от 500 RUB</span>"
             && title[0].outerHTML != "<span class=\"userTitle\">10%+50 RUB при сделке до 799 RUB<br>10%при сделке от 800 RUB</span>" && 
-            title[0].outerHTML != "<span class=\"userTitle\">бесплатно при сделке до 400 RUB<br>10% отсуммы при сделке от 400 RUB</span>") {
+            title[0].outerHTML != '<span class="userTitle">бесплатно при сделке до 1000 RUB<br>10% отсуммы при сделке от 1000 RUB</span>'
+            && title[0].outerHTML != '<span class="userTitle">бесплатно при сделке до 800 RUB<br>10% от суммы при сделке от 800 RUB</span>') {
                 return true;
             }
             else {
@@ -353,11 +354,11 @@ async function setBanner(banner, group, name) {
             break;
         default:
             if (banner.length > 0) {
-                if (localStorage.getItem("selfStyling") == "true") {
-                    var groups = JSON.parse(localStorage.getItem("customGroups"));
-                    for (let i = 0; i < groups.length; i++) {
-                        if (groups[i].name == group) {
-                            var styles = groups[i].banner.split(";");
+                if (localStorage.getItem("syncGroups") == "true") {
+                    var groups = JSON.parse(localStorage.getItem("SyncGroups"));
+                    for (let i1 = 0; i1 < groups.length; i1++) {
+                        if (groups[i1].Username == name.outerText) {
+                            var styles = groups[i1].BannerStyles.split(";");
                             for (let j = 0; j < styles.length; j++) {
                                 banner[banner.length - 1].style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
                             }
@@ -365,11 +366,11 @@ async function setBanner(banner, group, name) {
                         }
                     }
                 }
-                if (localStorage.getItem("syncGroups") == "true") {
-                    var groups = JSON.parse(localStorage.getItem("SyncGroups"));
-                    for (let i1 = 0; i1 < groups.length; i1++) {
-                        if (groups[i1].Username == name.outerText) {
-                            var styles = groups[i1].BannerStyles.split(";");
+                else if (localStorage.getItem("selfStyling") == "true") {
+                    var groups = JSON.parse(localStorage.getItem("customGroups"));
+                    for (let i = 0; i < groups.length; i++) {
+                        if (groups[i].name == group) {
+                            var styles = groups[i].banner.split(";");
                             for (let j = 0; j < styles.length; j++) {
                                 banner[banner.length - 1].style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
                             }
@@ -422,8 +423,9 @@ setInterval( () => {
             if (setBanner_ == true) {
                 setBanner(banner, group, _usernames[i]);
             }
-
-            var groups = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор"];
+            var def = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор", "Забаненный", "Read Only", "Новичок", "Новичок+", "Начинающий", "Пользователь", "Участник", "Эксперт",
+            "Олдфаг", "YOUGAME ELITE", "Глобальная элита", "Продавец", "Премиум", "Unreal Engine Group", "Легенда", "GRADIENT GROUP ("];
+            var groups = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор", "Тех. Администратор"];
             var title = _usernames[i].parentElement.parentElement.getElementsByClassName("userTitle");
             if (isGarant(title)) {
                 var _title = title[0].outerText;
@@ -433,7 +435,10 @@ setInterval( () => {
                 if (_title == "Модератор форума") {
                     _title = "Модератор";
                 }
-                if (groups.includes(group) == false && groups.includes(_title) == true) {
+                if (_title.startsWith("GRADIENT GROUP (")) {
+                    _title = "GRADIENT GROUP (";
+                }
+                if (groups.includes(group) == false && groups.includes(_title) == true && def.includes(group) == true) {
                     title[0].outerText = "";
                 }
             }
@@ -670,11 +675,11 @@ setInterval( () => {
         }
     }
 
-    if (document.location.href.includes("/market/")) {
+    if ((location.href.startsWith("https://yougame.biz/market/user/") || location.href.startsWith("https://yougame.biz/market/")) && document.getElementsByClassName("block-minorHeader").length > 0) {
         var index = usernames.indexOf(document.getElementsByClassName("block-minorHeader")[0].outerText);
         if (index >= 0) {
             var group = users[index].group;
-            setBanner(document.getElementsByClassName("userBanner"), group);
+            setBanner(document.getElementsByClassName("userBanner"), group, document.getElementsByClassName("block-minorHeader")[0]);
         }
     }
 
@@ -688,8 +693,10 @@ setInterval( () => {
             for (let j = 0; j < staff.length; j++) {
                 var index = usernames.indexOf(staff[j].outerText);
                 if (index >= 0) {
+                    var def = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор", "Забаненный", "Read Only", "Новичок", "Новичок+", "Начинающий", "Пользователь", "Участник", "Эксперт",
+                    "Олдфаг", "YOUGAME ELITE", "Глобальная элита", "Продавец", "Премиум", "Unreal Engine Group", "Легенда", "GRADIENT GROUP ("];
                     var groups = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор"];
-                    if (groups.includes(users[index].group) == false) {
+                    if (groups.includes(users[index].group) == false && def.includes(users[index].group) == true) {
                         staff[j].parentElement.parentElement.parentElement.parentElement.removeChild(staff[j].parentElement.parentElement.parentElement);
                     }
 
