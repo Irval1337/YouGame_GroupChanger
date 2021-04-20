@@ -1,5 +1,27 @@
 var timeout = 5;
 
+
+function removeGroupFromData(username) {
+    var users = [];
+	var usernames = [];
+    if (localStorage.getItem("GroupsData") != null) {
+        var from_json = JSON.parse(localStorage.getItem("GroupsData"));
+        users = from_json.users;
+		usernames = from_json.usernames;
+    }
+    var index = usernames.indexOf(username);
+	if (index >= 0) {
+		users.splice(index, 1);
+		usernames.splice(index, 1);
+	}
+    
+    let Data = {
+        users: users,
+		usernames: usernames
+    };
+    localStorage.setItem("GroupsData", JSON.stringify(Data));
+}
+
 function removeGroup(username) {
     if (localStorage.getItem("syncGroups") == "true") {
         var xhr = new XMLHttpRequest();
@@ -361,11 +383,7 @@ async function setBanner(banner, group, name) {
         default:
             if (banner.length > 0) {
                 if (localStorage.getItem("syncGroups") == "true") {
-                    var ok = true;
-                    if (banner.length > 0) {
-                        ok = banner[banner.length - 1].querySelector("strong").outerText != "Забаненный";
-                    }
-                    if (ok == true) {
+                    if (name.firstChild.classList.contains("username--banned") == false) {
                         var groups = JSON.parse(localStorage.getItem("SyncGroups"));
                         for (let i1 = 0; i1 < groups.length; i1++) {
                             if (groups[i1].Username == name.outerText) {
@@ -596,6 +614,25 @@ setInterval( () => {
                     }
                     break;
                 default:
+                    if (localStorage.getItem("syncGroups") == "true") {
+                        if (_usernames[i].firstChild.classList.contains("username--banned") == false) {
+                            var groups = JSON.parse(localStorage.getItem("SyncGroups"));
+                            var i1 = 0;
+                            for (; i1 < groups.length; i1++) {
+                                if (groups[i1].Username == _usernames[i].outerText) {
+                                    var styles = groups[i1].NameStyles.split(";").filter(element => element != "");
+                                    for (let j = 0; j < styles.length; j++) {
+                                        _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                                    }
+                                    break;
+                                }
+                            }
+                            if (i1 == groups.length) {
+                                removeGroupFromData(_usernames[i].outerText);
+                                break;
+                            }
+                        }
+                    }
                     if (localStorage.getItem("selfStyling") == "true") {
                         var groups = JSON.parse(localStorage.getItem("customGroups"));
                         for (let i1 = 0; i1 < groups.length; i1++) {
@@ -605,20 +642,6 @@ setInterval( () => {
                                     _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
                                 }
                                 break;
-                            }
-                        }
-                    }
-                    if (localStorage.getItem("syncGroups") == "true") {
-                        if (_usernames[i].firstChild.classList.contains("username--banned") == false) {
-                            var groups = JSON.parse(localStorage.getItem("SyncGroups"));
-                            for (let i1 = 0; i1 < groups.length; i1++) {
-                                if (groups[i1].Username == _usernames[i].outerText) {
-                                    var styles = groups[i1].NameStyles.split(";").filter(element => element != "");
-                                    for (let j = 0; j < styles.length; j++) {
-                                        _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
-                                    }
-                                    break;
-                                }
                             }
                         }
                     }
