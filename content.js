@@ -279,7 +279,7 @@ if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute(
 			xhr.send("_xfToken=" + token + "&_xfResponseType=json&_xfWithData=1");
 		}
 
-		if ($(path + " option:selected").attr("id") == "customGroup" && document.getElementsByClassName("username")[0].outerText == document.getElementsByClassName("p-navgroup-linkText")[0].outerText) {
+		if ($(path + " option:selected").attr("id") == "customGroup" && document.getElementsByClassName("username")[0].outerText == document.getElementsByClassName("p-navgroup-linkText")[0].outerText && localStorage.getItem("syncGroups") == "true") {
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", "https://irval.host/GroupChanger/AddUser.php", true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");

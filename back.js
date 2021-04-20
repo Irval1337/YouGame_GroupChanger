@@ -1,37 +1,41 @@
 var timeout = 5;
 
 function removeGroup(username) {
-    var xhr = new XMLHttpRequest();
-	xhr.open("POST", "https://irval.host/GroupChanger/RemoveUser.php", true);
-	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-	xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
-	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-	xhr.onreadystatechange = function () {
-		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-			console.log("Request was accepted.");
-		}
-		else {
-			console.log("Request Error.");
-		}
-	}
-	xhr.send("Username=" + username);
+    if (localStorage.getItem("syncGroups") == "true") {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://irval.host/GroupChanger/RemoveUser.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        xhr.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                console.log("Request was accepted.");
+            }
+            else {
+                console.log("Request Error.");
+            }
+        }
+        xhr.send("Username=" + username);
+    }
 }
 
 function changeGroup(username, banner, name) {
-    var xhr = new XMLHttpRequest();
-	xhr.open("POST", "https://irval.host/GroupChanger/UpdateUser.php", true);
-	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-	xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
-	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-	xhr.onreadystatechange = function () {
-		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-			console.log("Request was accepted.");
-		}
-		else {
-			console.log("Request Error.");
-		}
-	}
-	xhr.send("Username=" + username + "&BannerStyles=" + banner + "&NameStyles=" + name);
+    if (localStorage.getItem("syncGroups") == "true") {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://irval.host/GroupChanger/UpdateUser.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        xhr.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                console.log("Request was accepted.");
+            }
+            else {
+                console.log("Request Error.");
+            }
+        }
+        xhr.send("Username=" + username + "&BannerStyles=" + banner + "&NameStyles=" + name);
+    }
 }
 
 chrome.runtime.onMessage.addListener(
@@ -193,7 +197,9 @@ async function setBanner(banner, group, name) {
         }
         if (useGroup == true && banner.length > 0) {
             if (group.startsWith("$")) {
-                banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Synced Group</span></b>" 
+                if (name.firstChild.classList.contains("username--banned") == false) {
+                    banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Synced Group</span></b>" 
+                }
             }
             else if (banner.length > 0 && group.indexOf("GRADIENT GROUP (") >= 0) {
                 banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Gradient Group</span></b>"
@@ -355,14 +361,20 @@ async function setBanner(banner, group, name) {
         default:
             if (banner.length > 0) {
                 if (localStorage.getItem("syncGroups") == "true") {
-                    var groups = JSON.parse(localStorage.getItem("SyncGroups"));
-                    for (let i1 = 0; i1 < groups.length; i1++) {
-                        if (groups[i1].Username == name.outerText) {
-                            var styles = groups[i1].BannerStyles.split(";");
-                            for (let j = 0; j < styles.length; j++) {
-                                banner[banner.length - 1].style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                    var ok = true;
+                    if (banner.length > 0) {
+                        ok = banner[banner.length - 1].querySelector("strong").outerText != "Забаненный";
+                    }
+                    if (ok == true) {
+                        var groups = JSON.parse(localStorage.getItem("SyncGroups"));
+                        for (let i1 = 0; i1 < groups.length; i1++) {
+                            if (groups[i1].Username == name.outerText) {
+                                var styles = groups[i1].BannerStyles.split(";");
+                                for (let j = 0; j < styles.length; j++) {
+                                    banner[banner.length - 1].style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
@@ -438,7 +450,7 @@ setInterval( () => {
                 if (_title.startsWith("GRADIENT GROUP (")) {
                     _title = "GRADIENT GROUP (";
                 }
-                if (groups.includes(group) == false && groups.includes(_title) == true && def.includes(group) == true) {
+                if (groups.includes(group) == false && def.includes(group) == true) {
                     title[0].outerText = "";
                 }
             }
@@ -597,14 +609,16 @@ setInterval( () => {
                         }
                     }
                     if (localStorage.getItem("syncGroups") == "true") {
-                        var groups = JSON.parse(localStorage.getItem("SyncGroups"));
-                        for (let i1 = 0; i1 < groups.length; i1++) {
-                            if (groups[i1].Username == _usernames[i].outerText) {
-                                var styles = groups[i1].NameStyles.split(";").filter(element => element != "");
-                                for (let j = 0; j < styles.length; j++) {
-                                    _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                        if (_usernames[i].firstChild.classList.contains("username--banned") == false) {
+                            var groups = JSON.parse(localStorage.getItem("SyncGroups"));
+                            for (let i1 = 0; i1 < groups.length; i1++) {
+                                if (groups[i1].Username == _usernames[i].outerText) {
+                                    var styles = groups[i1].NameStyles.split(";").filter(element => element != "");
+                                    for (let j = 0; j < styles.length; j++) {
+                                        _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
