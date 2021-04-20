@@ -366,7 +366,7 @@ async function setBanner(banner, group, name) {
                         }
                     }
                 }
-                else if (localStorage.getItem("selfStyling") == "true") {
+                if (localStorage.getItem("selfStyling") == "true") {
                     var groups = JSON.parse(localStorage.getItem("customGroups"));
                     for (let i = 0; i < groups.length; i++) {
                         if (groups[i].name == group) {
@@ -675,11 +675,11 @@ setInterval( () => {
         }
     }
 
-    if ((location.href.startsWith("https://yougame.biz/market/user/") || location.href.startsWith("https://yougame.biz/market/")) && document.getElementsByClassName("block-minorHeader").length > 0) {
+    if (location.href.startsWith("https://yougame.biz/market/") && document.getElementsByClassName("block-minorHeader").length > 0) {
         var index = usernames.indexOf(document.getElementsByClassName("block-minorHeader")[0].outerText);
         if (index >= 0) {
             var group = users[index].group;
-            setBanner(document.getElementsByClassName("userBanner"), group, document.getElementsByClassName("block-minorHeader")[0]);
+            setBanner( document.getElementsByClassName("block-minorHeader")[0].parentElement.parentElement.getElementsByClassName("userBanner"), group, document.getElementsByClassName("block-minorHeader")[0]);
         }
     }
 
