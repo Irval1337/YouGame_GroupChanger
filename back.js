@@ -628,7 +628,7 @@ setInterval( () => {
                             var groups = JSON.parse(localStorage.getItem("SyncGroups"));
                             var i1 = 0;
                             for (; i1 < groups.length; i1++) {
-                                if (groups[i1].Username == _usernames[i].outerText) {
+                                if (groups[i1].Username == usernames[index]) {
                                     var styles = groups[i1].NameStyles.split(";").filter(element => element != "");
                                     for (let j = 0; j < styles.length; j++) {
                                         _usernames[i].lastChild.style[styles[j].substring(0, styles[j].indexOf(":")).trim()] = styles[j].substring(styles[j].indexOf(":") + 1).trim();
