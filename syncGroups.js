@@ -14,7 +14,7 @@ if (localStorage.getItem("syncGroups") == "true") {
             var usernames = from_json.usernames;
             for (let i = 0; i < User.length; i++) {
                 var index = usernames.indexOf(User[i].Username);
-                if (index <= 0) {
+                if (index < 0) {
                     class user {
                         username = null
                         group = null
@@ -32,7 +32,7 @@ if (localStorage.getItem("syncGroups") == "true") {
                 users: users,
                 usernames: usernames
             };
-        
+            
             localStorage.setItem("GroupsData", JSON.stringify(Data));
 
             if (this.responseText != tmp) {

@@ -79,7 +79,7 @@ if (localStorage.getItem("groupChange") == null) {
 	localStorage.setItem("customGroups", "[]");
 }
 
-if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute("data-template") == "member_view" && document.location.href.startsWith("https://yougame.biz/irval1/") == false && document.location.href.startsWith("https://yougame.bz/irval1/") == false) {
+if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute("data-template") == "member_view" && document.location.href.startsWith("https://yougame.biz/irval/") == false && document.location.href.startsWith("https://yougame.bz/irval/") == false) {
 	const select = document.createElement("select");
     select.style["background"] = "#151d20";
     select.style["color"] = "#fff";
@@ -226,6 +226,10 @@ if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute(
 	
 	option = document.createElement("option");
 	option.text = "Тех. Администратор";
+	select.add(option);
+
+	option = document.createElement("option");
+	option.text = "Бот форума";
 	select.add(option);
 
 	if (localStorage.getItem("selfStyling") == "true") {

@@ -248,6 +248,11 @@ async function setBanner(banner, group, name) {
                 banner[banner.length - 1].querySelector("strong").innerHTML = "Тех. Администратор"
             }
             break;
+        case "Бот форума":
+            if (banner.length > 0) {
+                banner[banner.length - 1].style.background = "#20B2AA";
+            }
+            break;
         case "Read Only":
             if (banner.length > 0) {
                 banner[banner.length - 1].style.background = "#a39e9e";
@@ -416,7 +421,7 @@ async function setBanner(banner, group, name) {
 if (localStorage.getItem("groupChange") == null) {
 	localStorage.setItem("groupChange", "true");
 	localStorage.setItem("selfStyling", "false");
-	localStorage.setItem("customGroups", "[]");
+	localStorage.setItem("customGroups", '[{"name":"Lolz1","banner":"background: linear-gradient(13deg, #007a98 , #0fdc91);","username":"background: linear-gradient(20deg, #006eff, #00ff81 52%, #fff 50%, #93cbff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 7px #00ffcf80;"},{"name":"Lolz2","banner":"background: linear-gradient(94.22deg, #F23108 -1.97%, #FF5252 7.72%, #FF3528 8.41%, #ED9024 9.09%, #FFA030 27.08%, #FCAA49 47.13%, #FCB35D 48.21%, #FFB763 63.58%, #FFA843 78.29%, #FBA846 89.95%, #FF3528 90.97%, #FF5252 91.84%, #F23108 101.53%); box-shadow: inset 0px 0px 0px 2px #FF9E3673, inset 0px 0px 0px 4px #ffda831c; -webkit-text-fill-color: #fff; text-shadow: 0px 5px 3px #FF7D5599, 0px -5px 3px #FF7D5599, 0px 8px 1px #ff90763d, 0px 0px 9px #fff;","username":"background: linear-gradient(80deg, #FF2E00 32%, #EF9E00 3% ); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 1px 3px 34px rgba(255, 193, 71, 0.13), 3px 1px 15px rgba(236, 78, 11, 0.45);"},{"name":"Lolz3","banner":"background: linear-gradient(-225deg, rgb(51 51 51 / 1) 0%, rgb(41 41 41) 48%, rgb(41 41 41) 100%);     color: #ffffff;text-shadow:     0px -2px 2px #f0f0f0","username":"color: #ffffff;text-shadow:  0px -2px 2px #f0f0f0"},{"name":"Lolz4","banner":"background: linear-gradient(106.32deg, rgb(10, 114, 252) 8.32%, #005aff 8.33%, #0094ff 90.46%, rgb(2, 133, 255) 90.65%);     text-shadow: 2px 0px 6px #ffffff1a, 2px 0px 6px #00f7ff, 2px 0px 8px #00ffdd, 2px 0px 8px #4f7dff, 0 9px 0px #ffffff26, 0 -11px 0px #ffffff26, 0 -1px 0 #4559d0, 0 1px 0 #4559d0, 0 1px 0 #4559d0, -1px 0 0 #4559d0, 1px 0 7px #4559d0, -1px 0 0 #4559d0, 1px 0 0 #4559d0, -1px -1px 0 #4559d0; };","username":"color: #00c4ff; text-shadow: 0 0 7px #006bffc7, 0px 0px 0px #4083ff, 0px 1px 0px #0014ffc7, 0px 1px 10px #1b00ff, -1px 1px 0px #0014ffc7, 1px 0px 0px #0014ffc7, -1px -1px 0px #0014ffc7;"},{"name":"Lolz5","banner":"background: linear-gradient(20deg, #0a7cde 0%, #57fff3 100%,#0095dd);","username":"background: linear-gradient(264deg, #0a7cde, #57fff3);     text-shadow: 0 0 6px #00ccffbd;     -webkit-background-clip: text;     -webkit-text-fill-color: transparent;"},{"name":"Lolz6","banner":"background: repeating-linear-gradient(45deg, #00000040, #ffffff40, #00000040, #ffffff40, #00000040, #ffffff40, #00000040, #ffffff40, #00000040), linear-gradient(180deg, #fff 0%, #fff 33.33333%, #0039a6 33.33333%, #0039a6 66.66666%, #d52b1e 66.66666%, #d52b1e 100%);text-shadow:                     0 0 3px #ffffff, 0px 1px 0px #ffffff, 0px 3px 0px #ffffff4f, 0px 5px 0px #ffffff2e;     color: #fff;     border-radius: 0px","username":"background: repeating-linear-gradient(45deg, #ffffff80, #00000080, #ffffff80, #00000080, #ffffff80, #00000080, #ffffff80, #00000080, #ffffff80, #00000080), linear-gradient(180deg, #fff 0%, #fff 43%, #0058ff 20%, #0058ff 62%, #f00 62%), linear-gradient(180deg, #fff 0%, #fff 43%, #0058ff 20%, #0058ff 62%, #f00 62%), linear-gradient(180deg, #fff 0%, #fff 43%, #0058ff 20%, #0058ff 62%, #f00 62%);text-shadow:   0 0 8px #ffffff40;-webkit-background-clip: text;-webkit-text-fill-color: transparent"},{"name":"Lolz7","banner":"background: background: #28CB3E; background: -webkit-linear-gradient(bottom right, #28CB3E, #0C7D43); background: -moz-linear-gradient(bottom right, #28CB3E, #0C7D43); background: linear-gradient(to top left, #28CB3E, #0C7D43);text-shadow:        #28CB3E 3px 3px 8px, #68ff16 -2px 3px 9px","username":"background: linear-gradient(90deg, #03FF03, #136E0C); -webkit-background-clip: text; -webkit-text-fill-color: transparent;text-shadow:         0px 0px 9px #00bd8d"}]');
 }
 
 if (localStorage.getItem("GroupsData") == null) {
@@ -454,7 +459,7 @@ setInterval( () => {
                 setBanner(banner, group, _usernames[i]);
             }
             var def = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор", "Забаненный", "Read Only", "Новичок", "Новичок+", "Начинающий", "Пользователь", "Участник", "Эксперт",
-            "Олдфаг", "YOUGAME ELITE", "Глобальная элита", "Продавец", "Премиум", "Unreal Engine Group", "Легенда", "GRADIENT GROUP ("];
+            "Олдфаг", "YOUGAME ELITE", "Глобальная элита", "Продавец", "Премиум", "Unreal Engine Group", "Легенда", "GRADIENT GROUP (", "Бот форума", "Тех. Администратор"];
             var groups = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор", "Тех. Администратор"];
             var title = _usernames[i].parentElement.parentElement.getElementsByClassName("userTitle");
             if (isGarant(title)) {
@@ -556,6 +561,9 @@ setInterval( () => {
                 case "Тех. Администратор":
                     _usernames[i].lastChild.style.color = "#ffffff";
                     break;
+                case "Бот форума":
+                    _usernames[i].lastChild.style.color = "#20B2AA";
+                    break;
                 case "GRADIENT GROUP (0)":
                     _usernames[i].lastChild.className = "username";
                     break;
@@ -614,6 +622,7 @@ setInterval( () => {
                     }
                     break;
                 default:
+                    var isBad = false;
                     if (localStorage.getItem("syncGroups") == "true") {
                         if (_usernames[i].firstChild.classList.contains("username--banned") == false) {
                             var groups = JSON.parse(localStorage.getItem("SyncGroups"));
@@ -627,10 +636,7 @@ setInterval( () => {
                                     break;
                                 }
                             }
-                            if (i1 == groups.length) {
-                                removeGroupFromData(_usernames[i].outerText);
-                                break;
-                            }
+                            isBad = i1 == groups.length;
                         }
                     }
                     if (localStorage.getItem("selfStyling") == "true") {
@@ -643,6 +649,10 @@ setInterval( () => {
                                 }
                                 break;
                             }
+                        }
+                        if (i1 == groups.length && isBad == true) {
+                            removeGroupFromData(_usernames[i]);
+                            continue;
                         }
                     }
                     break;
@@ -731,7 +741,7 @@ setInterval( () => {
                 var index = usernames.indexOf(staff[j].outerText);
                 if (index >= 0) {
                     var def = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор", "Забаненный", "Read Only", "Новичок", "Новичок+", "Начинающий", "Пользователь", "Участник", "Эксперт",
-                    "Олдфаг", "YOUGAME ELITE", "Глобальная элита", "Продавец", "Премиум", "Unreal Engine Group", "Легенда", "GRADIENT GROUP ("];
+                    "Олдфаг", "YOUGAME ELITE", "Глобальная элита", "Продавец", "Премиум", "Unreal Engine Group", "Легенда", "GRADIENT GROUP (", "Бот форума"];
                     var groups = ["Куратор", "Модератор", "Старший Модератор", "Арбитр", "Главный Модератор", "Администратор"];
                     if (groups.includes(users[index].group) == false && def.includes(users[index].group) == true) {
                         staff[j].parentElement.parentElement.parentElement.parentElement.removeChild(staff[j].parentElement.parentElement.parentElement);
