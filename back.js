@@ -219,7 +219,7 @@ async function setBanner(banner, group, name) {
         }
         if (useGroup == true && banner.length > 0) {
             if (group.startsWith("$")) {
-                if (name.firstChild.classList.contains("username--banned") == false) {
+                if (name.firstChild.classList == null || name.firstChild.classList.contains("username--banned") == false) {
                     banner[banner.length - 1].querySelector("strong").innerHTML = "<b><span style=\"color: #ffffff;\">Synced Group</span></b>" 
                 }
             }
@@ -388,7 +388,7 @@ async function setBanner(banner, group, name) {
         default:
             if (banner.length > 0) {
                 if (localStorage.getItem("syncGroups") == "true") {
-                    if (name.firstChild.classList.contains("username--banned") == false) {
+                    if (name.firstChild.classList == null || name.firstChild.classList.contains("username--banned") == false) {
                         var groups = JSON.parse(localStorage.getItem("SyncGroups"));
                         for (let i1 = 0; i1 < groups.length; i1++) {
                             if (groups[i1].Username == name.outerText) {
