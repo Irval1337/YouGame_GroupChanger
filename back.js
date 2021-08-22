@@ -25,7 +25,7 @@ function removeGroupFromData(username) {
 function removeGroup(username) {
     if (localStorage.getItem("syncGroups") == "true") {
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://irval.host/GroupChanger/RemoveUser.php", true);
+        xhr.open("POST", "https://groupchanger.irval.dev/RemoveUser.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
@@ -44,7 +44,7 @@ function removeGroup(username) {
 function changeGroup(username, banner, name) {
     if (localStorage.getItem("syncGroups") == "true") {
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "https://irval.host/GroupChanger/UpdateUser.php", true);
+        xhr.open("POST", "https://groupchanger.irval.dev/UpdateUser.php", true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");

@@ -57,7 +57,7 @@ function removeGroup() {
 
 	if (document.getElementsByClassName("username")[0].outerText == document.getElementsByClassName("p-navgroup-linkText")[0].outerText) {
 		var xhr = new XMLHttpRequest();
-		xhr.open("POST", "https://irval.host/GroupChanger/RemoveUser.php", true);
+		xhr.open("POST", "https://groupchanger.irval.dev/RemoveUser.php", true);
 		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 		xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
 		xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
@@ -79,7 +79,7 @@ if (localStorage.getItem("groupChange") == null) {
 	localStorage.setItem("customGroups", "[]");
 }
 
-if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute("data-template") == "member_view" && document.location.href.startsWith("https://yougame.biz/irval/") == false && document.location.href.startsWith("https://yougame.bz/irval/") == false) {
+if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute("data-template") == "member_view" && document.location.href.includes("/irval/") == false) {
 	const select = document.createElement("select");
     select.style["background"] = "#151d20";
     select.style["color"] = "#fff";
@@ -285,7 +285,7 @@ if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute(
 
 		if ($(path + " option:selected").attr("id") == "customGroup" && document.getElementsByClassName("username")[0].outerText == document.getElementsByClassName("p-navgroup-linkText")[0].outerText && localStorage.getItem("syncGroups") == "true") {
 			var xhr = new XMLHttpRequest();
-			xhr.open("POST", "https://irval.host/GroupChanger/AddUser.php", true);
+			xhr.open("POST", "https://groupchanger.irval.dev/AddUser.php", true);
 			xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
 			xhr.setRequestHeader("Accept", "application/json, text/javascript, */*; q=0.01");
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
