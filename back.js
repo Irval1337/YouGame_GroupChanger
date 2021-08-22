@@ -641,7 +641,8 @@ setInterval( () => {
                     }
                     if (localStorage.getItem("selfStyling") == "true") {
                         var groups = JSON.parse(localStorage.getItem("customGroups"));
-                        for (let i1 = 0; i1 < groups.length; i1++) {
+						var i1 = 0;
+                        for (; i1 < groups.length; i1++) {
                             if (groups[i1].name == group) {
                                 var styles = groups[i1].username.split(";").filter(element => element != "");
                                 for (let j = 0; j < styles.length; j++) {
@@ -651,7 +652,7 @@ setInterval( () => {
                             }
                         }
                         if (i1 == groups.length && isBad == true) {
-                            removeGroupFromData(_usernames[i]);
+                            removeGroupFromData(usernames[index]);
                             continue;
                         }
                     }
