@@ -433,15 +433,21 @@ var usernames = from_json.usernames;
 
 setInterval( () => {
     if (localStorage.getItem("groupChange") == "true") {
-    var _usernames = document.getElementsByClassName("username");
+    var _usernames = $("[class^='username']");
     for (let i = 0; i < _usernames.length; i++) {
         var index = usernames.indexOf(_usernames[i].outerText);
         if (_usernames[i].outerText.startsWith("@") && index < 0)
             index = usernames.indexOf(_usernames[i].outerText.substring(1));
         if (index >= 0) {
-            if (_usernames[i].lastChild.style == null) {
+            if (_usernames[i].lastChild.style == null && _usernames[i].innerHTML.indexOf("<strong>") < 0) {
+				console.log("a");
                 continue;
             }
+			if (_usernames[i].innerHTML.indexOf("<strong>") >= 0) {
+				if (_usernames[i].querySelector("strong").outerText != _usernames[i].outerText) {
+					_usernames[i].innerHTML = '<strong>' + _usernames[i].outerText + '</strong>';
+				}
+			}
             var group = users[index].group;
             var parent = _usernames[i].parentElement.parentElement.parentElement.parentElement;
             var banner = parent.getElementsByClassName("userBanner");

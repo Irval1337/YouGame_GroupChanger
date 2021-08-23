@@ -1,4 +1,4 @@
-var settings = '{"emoji": [{"name": "Одобряю", "link": "https://lolz.guru/styles/default/xenforo/smilies/finger_up.png"}, {"name": "PopCat", "link": "https://lolz.guru/styles/default/xenforo/smilies/popcat.gif"}]}';
+var settings = '';
 
 var timeout = 5;
 
@@ -6,6 +6,12 @@ setInterval( () => {
     if (localStorage.getItem("customEmoji") == "true") {
         var block = document.getElementsByClassName("menu-scroller js-emojiFullList")[0];
         if (block != null && block.getElementsByClassName("menu-header js-customHeader").length == 0) {
+			var req = new XMLHttpRequest();
+			req.open("GET", "https://groupchanger.irval.dev/GetEmoji.php", true);
+			req.onload = function (){
+				settings = req.responseText;
+			}
+			req.send(null);
             var data = JSON.parse(settings);
 
             var example = document.getElementsByClassName("menu-row js-recentBlock ")[0].firstElementChild.firstElementChild;
@@ -21,7 +27,7 @@ setInterval( () => {
             block.insertBefore(elem, block.getElementsByClassName("menu-header js-recentHeader ")[0]);
 
             for (let i = 0; i < data.emoji.length; i++) {
-                var emoji = '<a class="js-emoji" data-shortname="' + data.emoji[i].name + '"><img src="' + data.emoji[i].link + '" class="smilie" alt="[IMG]' + data.emoji[i].link + '[/IMG]" title="Одобряю" data-shortname="[IMG]' + data.emoji[i].link + '[/IMG]"></a>';
+                var emoji = '<a class="js-emoji" data-shortname="' + data.emoji[i].name + '"><img src="' + data.emoji[i].link + '" class="smilie" alt="[IMG]' + data.emoji[i].link + '[/IMG]" title="' + data.emoji[i].name + '" data-shortname="[IMG]' + data.emoji[i].link + '[/IMG]"></a>';
                 var em = example.cloneNode(true);
                 em.innerHTML = emoji;
                 document.getElementsByClassName("emojiList js-customList")[0].appendChild(em);

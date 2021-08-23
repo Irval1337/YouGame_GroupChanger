@@ -15,15 +15,12 @@ if (localStorage.getItem("syncGroups") == "true") {
             for (let i = 0; i < User.length; i++) {
                 var index = usernames.indexOf(User[i].Username);
                 if (index < 0) {
-                    class user {
-                        username = null
-                        group = null
-                        banReason = "Undefined"
-                        banDate = "Undefined"
-                    }
-                    var _User = new user();
-                    _User.username = User[i].Username;
-                    _User.group = "$" + User[i].Username + "$";
+					let _User = {
+						username: User[i].Username,
+						group: "$" + User[i].Username + "$",
+						banReason: "Undefined",
+						banDate: "Undefined"
+					};
                     users.push(_User);
                     usernames.push(_User.username);
                 }

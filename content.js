@@ -1,10 +1,4 @@
-window.onload = function() {class user {
-    username = null
-    group = null
-	banReason = "Undefined"
-	banDate = "Undefined"
-}
-
+window.onload = function() {
 function setGroup(group) {
     var username = document.getElementsByClassName("username")[0].outerText;
     var users = [];
@@ -19,9 +13,12 @@ function setGroup(group) {
 		users[index].group = group;
 	}
 	else {
-    	var User = new user();
-    	User.username = username;
-    	User.group = group;
+		let User = {
+			username: username,
+			group: group,
+			banReason: "Undefined",
+			banDate: "Undefined"
+		};
     	users.push(User);
 		usernames.push(username);
 	}
@@ -79,7 +76,7 @@ if (localStorage.getItem("groupChange") == null) {
 	localStorage.setItem("customGroups", "[]");
 }
 
-if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute("data-template") == "member_view" && document.location.href.includes("/irva1l/") == false) {
+if (localStorage.getItem("groupChange") == "true" && document.body.getAttribute("data-template") == "member_view" && document.location.href.includes("/irval/") == false) {
 	const select = document.createElement("select");
     select.style["background"] = "#151d20";
     select.style["color"] = "#fff";
