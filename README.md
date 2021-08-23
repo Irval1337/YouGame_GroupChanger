@@ -1,3 +1,6 @@
+Chrome: https://chrome.google.com/webstore/detail/yougame-groupchanger/ojkngahjnhhihleemihgfdlkoecighgk/ <br>
+Mozilla: https://addons.mozilla.org/ru/firefox/addon/yougame-groupchanger/
+
 ## YouGame_GroupChanger
 Принцип работы основан на постоянном изменении стилей некоторых элементов страницы во время работы, а также загрузки. Возможны редкие фризы, при их возникновении измените значение переменной `timeout` в файле `back.js` на большее.
 
