@@ -440,7 +440,6 @@ setInterval( () => {
             index = usernames.indexOf(_usernames[i].outerText.substring(1));
         if (index >= 0) {
             if (_usernames[i].lastChild.style == null && _usernames[i].innerHTML.indexOf("<strong>") < 0) {
-				console.log("a");
                 continue;
             }
 			if (_usernames[i].innerHTML.indexOf("<strong>") >= 0) {
