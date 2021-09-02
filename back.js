@@ -439,7 +439,7 @@ setInterval( () => {
         if (_usernames[i].outerText.startsWith("@") && index < 0)
             index = usernames.indexOf(_usernames[i].outerText.substring(1));
         if (index >= 0) {
-            if (_usernames[i].lastChild.style == null && _usernames[i].innerHTML.indexOf("<strong>") < 0) {
+            if (_usernames[i].lastChild.style == null && _usernames[i].innerHTML.indexOf("<strong>") < 0 || _usernames[i].firstChild.classList == null) {
                 continue;
             }
 			if (_usernames[i].innerHTML.indexOf("<strong>") >= 0) {
